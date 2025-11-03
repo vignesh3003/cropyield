@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Crop Yield Predictor</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Crop Yield Predictor</h1>
+
+      <form id="predict-form" method="post" action="/predict">
+        <div class="row">
+          <label>Crop<input name="Crop" placeholder="e.g. Rice" /></label>
+          <label
+            >Year<input name="Crop_Year" type="number" placeholder="e.g. 2020"
+          /></label>
+        </div>
+
+        <div class="row">
+          <label
+            >Season
+            <select name="Season">
+              <option>Kharif</option>
+              <option>Rabi</option>
+              <option>Autumn</option>
+              <option>Summer</option>
+              <option>Whole Year</option>
+              <option>Winter</option>
+            </select>
+          </label>
+          <label
+            >State<input name="State" placeholder="e.g. Karnataka"
+          /></label>
+        </div>
+
+        <div class="row">
+          <label
+            >Area (ha)<input
+              name="Area"
+              type="number"
+              step="any"
+              placeholder="Area"
+          /></label>
+          <label
+            >Annual Rainfall (mm)<input
+              name="Annual_Rainfall"
+              type="number"
+              step="any"
+              placeholder="Rainfall"
+          /></label>
+        </div>
+
+        <div class="row">
+          <label
+            >Fertilizer<input
+              name="Fertilizer"
+              type="number"
+              step="any"
+              placeholder="Fertilizer used"
+          /></label>
+          <label
+            >Pesticide<input
+              name="Pesticide"
+              type="number"
+              step="any"
+              placeholder="Pesticide used"
+          /></label>
+        </div>
+
+        <div class="actions">
+          <button type="submit">Predict (form)</button>
+          <button id="ajax-btn" type="button">Predict (AJAX)</button>
+        </div>
+      </form>
+
+      <div id="result">
+        {% if prediction %}
+        <div class="card">
+          <h2>Prediction</h2>
+          <p><strong>Predicted yield:</strong> {{ prediction }}</p>
+        </div>
+        {% endif %} {% if error %}
+        <div class="card error">Error: {{ error }}</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
