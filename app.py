@@ -125,19 +125,15 @@ def form_predict():
     payload = form.to_dict()
     df, errors = validate_and_prepare(payload)
     if errors is not None:
-        return render_template('index.html', error=errors, input=form)
+        return jsonify({'errors': errors}), 400
 
     mdl = load_model()
-    return jsonify({'message': 'Not implemented in this version.'})
-    # try:
-    #     pred = mdl.predict(df)
-    #     value = round(float(pred[0]), 4)
-    #     print(value)
-    #     return value
-    #     # return render_template('index.html', prediction=value, input=form)
-    # except Exception as e:
-    #     print("error")
-    #     return render_template('index.html', error=str(e), input=form)
+    try:
+        pred = mdl.predict(df)
+        value = round(float(pred[0]), 4)
+        return jsonify({'prediction': value})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/api/predict_batch', methods=['POST'])
