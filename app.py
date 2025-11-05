@@ -1,8 +1,10 @@
 from flask import Flask, request, render_template, jsonify, send_file
+from flask import Response
 import joblib
 import pandas as pd
 import os
 import io
+import json
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 
@@ -131,7 +133,24 @@ def form_predict():
     try:
         pred = mdl.predict(df)
         value = round(float(pred[0]), 4)
-        return jsonify({'prediction': value})
+        # If client requested a downloadable JSON file, return as attachment
+        download_requested = False
+        # form checkbox 'download' will be 'on' when checked
+        if payload.get('download') in ('1', 'true', 'on', True):
+            download_requested = True
+        # also support query param ?download=1
+        if request.args.get('download') in ('1', 'true'):
+            download_requested = True
+
+        result_obj = {'prediction': value}
+        if download_requested:
+            data_bytes = json.dumps(result_obj).encode('utf-8')
+            buf = io.BytesIO(data_bytes)
+            buf.seek(0)
+            # send as file attachment so browser downloads it
+            return send_file(buf, mimetype='application/json', as_attachment=True, download_name='prediction.json')
+
+        return jsonify(result_obj)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
