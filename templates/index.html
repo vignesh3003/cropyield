@@ -2,13 +2,18 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="theme-color" content="#2b6cb0" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Crop Yield Predictor</title>
+    <link rel="manifest" href="/static/manifest.json" />
     <link rel="stylesheet" href="/static/styles.css" />
   </head>
   <body>
     <div class="container">
-      <h1>Crop Yield Predictor</h1>
+      <div class="topbar">
+        <h1>Crop Yield Predictor</h1>
+        <button id="install-btn" class="install">Install App</button>
+      </div>
 
       <form id="predict-form" method="post" action="/predict">
         <div class="row">
@@ -75,6 +80,24 @@
         </div>
       </form>
 
+      <hr />
+
+      <h3>Batch prediction (CSV)</h3>
+      <form id="batch-form" enctype="multipart/form-data">
+        <div class="row">
+          <label
+            >CSV file<input
+              id="csv-file"
+              name="file"
+              type="file"
+              accept="text/csv"
+          /></label>
+        </div>
+        <div class="actions">
+          <button id="batch-btn" type="button">Upload & Predict</button>
+        </div>
+      </form>
+
       <div id="result">
         {% if prediction %}
         <div class="card">
@@ -88,5 +111,18 @@
     </div>
 
     <script src="/static/app.js"></script>
+    <script>
+      // Register service worker (also handled in app.js but keep inline fallback)
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+          .register("/static/service-worker.js")
+          .then(function (reg) {
+            console.log("Service worker registered.", reg);
+          })
+          .catch(function (err) {
+            console.warn("Service worker registration failed:", err);
+          });
+      }
+    </script>
   </body>
 </html>
